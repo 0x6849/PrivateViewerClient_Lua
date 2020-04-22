@@ -19,7 +19,7 @@ copas.addthread(function()
   do
     w:send(json.encode{action="listRooms", name = app_name})
     local json=assert(json.decode(w:receive()))
-    room_list=json.rooms
+    room_list=json.rooms or {}
   end
   table.insert(room_list,1, "new")
   local room_name=choose("Choose room", room_list)
@@ -52,6 +52,8 @@ copas.addthread(function()
       w:send(json.encode{action="change", jump = 10})
     elseif act=="jump -10" then
       w:send(json.encode{action="change", jump = -10})
+    elseif act=="reset" then
+      w:send(json.encode{action="change", timeStamp = 0})
     elseif act=="jump absolute" then
     elseif act=="jump relative" then
     end
