@@ -10,14 +10,16 @@ local function choose(query, list)
     if list[at] then return list[at] end
   end
 end
+local app_name="chriku-active"
 copas.addthread(function()
   local w=ws.connect(assert(require"config".url,"Missing URL in config"), assert(require"config".port,"Missing port in config"))
   local inst=mplayer(arg[2])
 
   local room_list
   do
-    w:send(json.encode{action="listRooms"})
-    room_list={}
+    w:send(json.encode{action="listRooms", name = app_name})
+    local json=assert(json.decode(w:receive()))
+    room_list=json.rooms
   end
   table.insert(room_list,1, "new")
   local room_name=choose("Choose room", room_list)
@@ -25,15 +27,13 @@ copas.addthread(function()
   if room_name=="new" then
     io.write("room name: ")
     room_name=io.read()
-    w:send(json.encode{action="createRoom", roomID=room_name})
+    w:send(json.encode{action="createRoom", roomID = room_name, name = app_name})
   end
 
-  w:send(json.encode{action="join", roomID=room_name, "chriku-active"})
+  w:send(json.encode{action="join", roomID=room_name, name = app_name})
   --w:send(json.encode{action="leave"})
   while true do
-    --local json=assert(json.decode(w:receive()))
     --print("======")
-    --for k,v in pairs(json) do print(k,v) end
     --assert(json.result)
     local act=choose("Action",{"play", "pause", "set speed", "jump +10", "jump -10", "jump absolute", "jump relative"})
     if act=="play" then
