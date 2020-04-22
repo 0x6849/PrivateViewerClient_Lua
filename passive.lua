@@ -13,7 +13,7 @@ copas.addthread(function()
     local json=assert(json.decode(w:receive()))
     print("======")
     for k,v in pairs(json) do print(k,v) end
-    --assert(json.result)
+    assert(json.result)
     if json.playSpeed then
       inst:set_speed(json.playSpeed)
     end
