@@ -1,3 +1,4 @@
+local socket=require"socket"
 local time=socket.gettime
 local json=require"dkjson"
 local copas=require"copas"
