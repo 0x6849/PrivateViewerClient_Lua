@@ -18,8 +18,10 @@ copas.addthread(function()
   local room_list
   do
     w:send(json.encode{action="listRooms", name = app_name})
-    local json=assert(json.decode(w:receive()))
-    room_list=json.rooms or {}
+    w:receive()
+    local d=assert(json.decode(w:receive()))
+    print(json.encode(d))
+    room_list=d.rooms or {}
   end
   table.insert(room_list,1, "new")
   local room_name=choose("Choose room", room_list)
@@ -35,7 +37,7 @@ copas.addthread(function()
   while true do
     --print("======")
     --assert(json.result)
-    local act=choose("Action",{"play", "pause", "set speed", "jump +10", "jump -10", "jump absolute", "jump relative"})
+    local act=choose("Action",{"play", "pause", "set speed", "jump +10", "jump -10", "jump absolute", "jump relative", "reset"})
     if act=="play" then
       w:send(json.encode{action="change", paused=false})
     elseif act=="pause" then
@@ -55,7 +57,21 @@ copas.addthread(function()
     elseif act=="reset" then
       w:send(json.encode{action="change", timeStamp = 0})
     elseif act=="jump absolute" then
+      io.write("new pos: ")
+      local pos=tonumber(io.read())
+      if pos then
+        w:send(json.encode{action="change", timeStamp=pos})
+      else
+        print("no change")
+      end
     elseif act=="jump relative" then
+      io.write("rel pos: ")
+      local pos=tonumber(io.read())
+      if pos then
+        w:send(json.encode{action="change", jump=pos})
+      else
+        print("no change")
+      end
     end
   end
 

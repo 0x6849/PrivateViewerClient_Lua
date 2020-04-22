@@ -32,20 +32,17 @@ return function(filename)
   end
   function ret:pause()
     pos=get_time()
-    if playing then
-      playing=false
-      send("set_property", "pause", true)
-    end
+    playing=false
+    send("set_property", "pause", true)
   end
   function ret:play()
-    if not playing then
-      playing=true
-      send("set_property", "pause", false)
-      base=time()
-    end
+    playing=true
+    pos=get_time()
+    base=time()
+    send("set_property", "pause", false)
   end
   function ret:seek(stime)
-    if math.abs(stime-get_time())>-1 then
+    if math.abs(stime-get_time())>1 then
       send("seek",stime,"absolute")
     end
     pos=stime
